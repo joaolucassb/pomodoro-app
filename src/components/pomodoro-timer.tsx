@@ -3,7 +3,6 @@ import { useInterval } from '../hooks/use-interval';
 import { Button } from './button';
 import { Timer } from './timer';
 import { secondsToTime } from '../utils/seconds-to-time';
-import { workerData } from 'worker_threads';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const bellStart = require('../sounds/bell-start.mp3');
