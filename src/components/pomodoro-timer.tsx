@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useInterval } from '../hooks/use-interval';
 import { Button } from './button';
 import { Timer } from './timer';
 import { secondsToTime } from '../utils/seconds-to-time';
+import { workerData } from 'worker_threads';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const bellStart = require('../sounds/bell-start.mp3');
@@ -35,31 +36,42 @@ export function PomodoroTimer(props: Props): JSX.Element {
   useInterval(
     () => {
       setMainTime(mainTime - 1);
+      if (working) setfullWorkingTime(fullWorkingTime + 1);
     },
     timeCouting ? 1000 : null,
   );
 
-  const configureWork = () => {
+  const configureWork = useCallback(() => {
     setTimeCouting(true);
     setWorking(true);
     setResting(false);
     setMainTime(props.pomodoroTime);
     auidoStartWorking.play();
-  };
+  }, [setMainTime, setResting, setMainTime, setWorking, props.pomodoroTime]);
 
-  const configureRest = (long: boolean) => {
-    setTimeCouting(true);
-    setWorking(false);
-    setResting(true);
+  const configureRest = useCallback(
+    (long: boolean) => {
+      setTimeCouting(true);
+      setWorking(false);
+      setResting(true);
 
-    if (long) {
-      setMainTime(props.longRestTime);
-    } else {
-      setMainTime(props.shortRestTime);
-    }
+      if (long) {
+        setMainTime(props.longRestTime);
+      } else {
+        setMainTime(props.shortRestTime);
+      }
 
-    auidoStopWorking.play();
-  };
+      auidoStopWorking.play();
+    },
+    [
+      setTimeCouting,
+      setWorking,
+      setResting,
+      setMainTime,
+      props.longRestTime,
+      props.shortRestTime,
+    ],
+  );
 
   useEffect(() => {
     if (working) document.body.classList.add('working');
@@ -93,7 +105,7 @@ export function PomodoroTimer(props: Props): JSX.Element {
 
   return (
     <div className="pomodoro">
-      <h2>You are: working</h2>
+      <h2>You are {working ? 'Working' : 'Resting'}</h2>
       <Timer mainTime={mainTime} />
       <div className="controls">
         <Button text="Work" onClick={() => configureWork()} />
