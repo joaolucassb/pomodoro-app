@@ -56,8 +56,13 @@ body {
   padding: 10px 25px;
   border-radius: 4px;
   color: #000;
-  transition: backgroud-color 300ms ease-in-out;
+  transition: 300ms ease-in-out;
   margin: 20px auto;
+}
+
+.pomodoro button:hover {
+  transform: scale(98%);
+  transition: 300ms ease-in-out;
 }
 
 .working .pomodoro button {
